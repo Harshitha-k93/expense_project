@@ -1,0 +1,24 @@
+{% extends "expenses/base.html" %}
+
+{% block title %}{{ heading }} · Expense Tracker{% endblock %}
+
+{% block content %}
+    <h1>{{ heading }}</h1>
+    <section class="card">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <div class="form-field">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {{ field.errors }}
+                </div>
+            {% endfor %}
+            <div class="actions">
+                <button class="button" type="submit">Save expense</button>
+                <a class="button button-secondary" href="{% url 'expense_list' %}">Cancel</a>
+            </div>
+        </form>
+    </section>
+{% endblock %}

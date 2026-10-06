@@ -1,0 +1,79 @@
+{% extends "expenses/base.html" %}
+
+{% block title %}Expenses · Expense Tracker{% endblock %}
+
+{% block content %}
+    <h1>Expenses</h1>
+
+    <section class="card" aria-label="Expense summary">
+        <div class="muted">Total shown</div>
+        <div class="summary">{{ total|floatformat:2 }}</div>
+    </section>
+
+    <section class="card">
+        <form method="get" class="filters">
+            <div>
+                <label for="category">Filter by category</label>
+                <select id="category" name="category">
+                    <option value="">All categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="button" type="submit">Apply filter</button>
+            {% if selected_category %}
+                <a class="button button-secondary" href="{% url 'expense_list' %}">Clear</a>
+            {% endif %}
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Expense history</h2>
+        {% if expenses %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for expense in expenses %}
+                            <tr>
+                                <td>{{ expense.title }}</td>
+                                <td>{{ expense.category }}</td>
+                                <td>{{ expense.date|date:"M j, Y" }}</td>
+                                <td>{{ expense.amount|floatformat:2 }}</td>
+                                <td>
+                                    <div class="actions">
+                                        <a href="{% url 'expense_edit' expense.pk %}">Edit</a>
+                                        <a href="{% url 'expense_delete' expense.pk %}">Delete</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="muted">No expenses found. Add an expense to get started.</p>
+            <a class="button" href="{% url 'expense_add' %}">Add expense</a>
+        {% endif %}
+    </section>
+
+    {% if category_totals %}
+        <section class="card">
+            <h2>Totals by category</h2>
+            <ul class="category-list">
+                {% for item in category_totals %}
+                    <li>{{ item.category }}: {{ item.total|floatformat:2 }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
+{% endblock %}
